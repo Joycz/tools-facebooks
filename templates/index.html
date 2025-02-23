@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <style>
+        /* Custom SweetAlert2 styles */
+        .swal2-popup {
+            font-size: 0.9rem !important;
+            border-radius: 10px !important;
+        }
+        .swal2-title {
+            font-size: 1.2rem !important;
+            font-weight: 600 !important;
+        }
+        .swal2-html-container {
+            font-size: 0.95rem !important;
+        }
+        .swal2-confirm, .swal2-cancel {
+            font-size: 0.9rem !important;
+            padding: 0.5rem 1.5rem !important;
+        }
+        .swal2-popup.swal2-toast {
+            padding: 0.5rem !important;
+        }
+        
+        /* Main styles */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            min-height: 100vh;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(120deg, #3b82f6, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            background: linear-gradient(to right, #f9fafb, #f3f4f6);
+            border-radius: 1rem 1rem 0 0;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #3b82f6, #2563eb);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(to right, #2563eb, #1d4ed8);
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: linear-gradient(to right, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(to right, #dc2626, #b91c1c);
+            transform: translateY(-1px);
+        }
+
+        .log-container {
+            height: 300px;
+            overflow-y: auto;
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+            font-family: "Fira Code", monospace;
+            font-size: 0.9rem;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .log-message {
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.375rem;
+            border-left: 3px solid transparent;
+        }
+
+        .log-success {
+            background-color: #f0fdf4;
+            border-left-color: #22c55e;
+            color: #15803d;
+        }
+
+        .log-error {
+            background-color: #fef2f2;
+            border-left-color: #ef4444;
+            color: #b91c1c;
+        }
+
+        /* Table styles */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table th {
+            background: #f8fafc;
+            padding: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            color: #64748b;
+        }
+
+        .table td {
+            padding: 1rem;
+            border-top: 1px solid #e2e8f0;
+            color: #334155;
+        }
+
+        .table tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        /* Modal styles */
+        .modal {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1.5rem;
+            background: linear-gradient(to right, #f9fafb, #f3f4f6);
+            border-radius: 1rem 1rem 0 0;
+        }
+
+        /* Disable styles */
+        .disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+            
+            .card {
+                margin-bottom: 1rem;
+            }
+            
+            .card-header, .card-body {
+                padding: 1rem;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        /* Thêm styles mới */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 280px;
+            background: white;
+            padding: 1.5rem;
+            border-right: 1px solid #e5e7eb;
+            overflow-y: auto;
+            z-index: 40;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: #4b5563;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: #f3f4f6;
+            color: #2563eb;
+        }
+
+        .nav-link i {
+            font-size: 1.25rem;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-info h3 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .stat-info p {
+            color: #6b7280;
+            margin: 0;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #2563eb;
+            color: white;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 50;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="mb-8">
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Facebook Tools</h1>
+            <p class="text-gray-600 text-sm">Công cụ quản lý và tự động hóa</p>
+        </div>
+
+        <nav>
+            <a href="#accounts" class="nav-link active" data-section="accounts">
+                <i class="fas fa-users"></i>
+                <span>Quản lý tài khoản</span>
+            </a>
+            <a href="#scrape" class="nav-link" data-section="scrape">
+                <i class="fas fa-download"></i>
+                <span>Cào thành viên</span>
+            </a>
+            <a href="#addfriends" class="nav-link" data-section="addfriends">
+                <i class="fas fa-user-plus"></i>
+                <span>Kết bạn tự động</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon bg-blue-100 text-blue-600">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ accounts|length }}</h3>
+                    <p>Tài khoản</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon bg-green-100 text-green-600">
+                    <i class="fas fa-download"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ profiles|default(0) }}</h3>
+                    <p>File đã cào</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon bg-indigo-100 text-indigo-600">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ total_friends|default(0) }}</h3>
+                    <p>Bạn bè đã thêm</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="mb-6 p-4 rounded-lg {% if category == 'error' %}bg-red-100 text-red-700 border-l-4 border-red-500{% else %}bg-green-100 text-green-700 border-l-4 border-green-500{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Content Sections -->
+        <section id="accounts" class="content-section active">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">
+                        <i class="fas fa-users text-blue-500"></i>
+                        Quản lý tài khoản Facebook
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <button class="btn btn-primary mb-6" onclick="document.getElementById('addAccountModal').classList.remove('hidden')">
+                        <i class="fas fa-plus"></i>
+                        Thêm tài khoản
+                    </button>
+                    
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tên</th>
+                                    <th>Ngày thêm</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for account in accounts %}
+                                <tr>
+                                    <td>{{ account.id }}</td>
+                                    <td>{{ account.name }}</td>
+                                    <td>{{ account.added_date }}</td>
+                                    <td class="space-x-2">
+                                        <button class="btn bg-yellow-500 hover:bg-yellow-600 text-white edit-account-btn" 
+                                                data-account='{{ account|tojson|safe }}'>
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <a href="{{ url_for('api.delete_account', id=account.id) }}" 
+                                           class="btn bg-red-500 hover:bg-red-600 text-white"
+                                           onclick="return confirm('Bạn có chắc muốn xóa?')">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="scrape" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">
+                        <i class="fas fa-download text-green-500"></i>
+                        Cào thành viên nhóm
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="scrapeForm" onsubmit="return scrapeMembersSubmit(event)" class="space-y-6">
+                        <div class="form-group">
+                            <label class="form-label">Chọn tài khoản</label>
+                            <select class="form-control" name="account_id" required>
+                                {% for account in accounts %}
+                                <option value="{{ account.id }}">{{ account.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">URL nhóm</label>
+                            <input type="url" class="form-control" name="group_url" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Số lượng thành viên (để trống = tất cả)</label>
+                            <input type="number" class="form-control" name="max_members" min="1">
+                        </div>
+                        <div class="flex gap-4">
+                            <button type="submit" class="btn btn-primary" id="scrapeButton">
+                                <i class="fas fa-download"></i>
+                                Bắt đầu cào
+                            </button>
+                            <button type="button" class="btn btn-danger hidden" id="stopButton">
+                                <i class="fas fa-stop"></i>
+                                Dừng lại
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section id="addfriends" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">
+                        <i class="fas fa-user-plus text-indigo-500"></i>
+                        Kết bạn tự động
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="addFriendsForm" onsubmit="return addFriendsSubmit(event)" class="space-y-6">
+                        <div class="form-group">
+                            <label class="form-label">Chọn tài khoản</label>
+                            <select class="form-control" name="account_id" required>
+                                {% for account in accounts %}
+                                <option value="{{ account.id }}">{{ account.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Chọn file JSON</label>
+                            <div class="relative">
+                                <select class="form-control pr-10" name="json_file" required>
+                                    <option value="">Đang tải danh sách file...</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-gray-500">
+                                    <i class="fas fa-sync-alt" id="jsonFileRefreshIcon"></i>
+                                </div>
+                            </div>
+                            <p class="mt-2 text-sm text-gray-500">Danh sách file được cập nhật tự động mỗi 5 giây</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Số lượng bạn bè tối đa</label>
+                            <input type="number" class="form-control" name="max_friends" value="20" min="1" required>
+                        </div>
+                        <div class="flex gap-4">
+                            <button type="submit" class="btn btn-primary" id="addFriendsButton">
+                                <i class="fas fa-user-plus"></i>
+                                Bắt đầu kết bạn
+                            </button>
+                            <button type="button" class="btn btn-danger hidden" id="stopAddFriendsButton">
+                                <i class="fas fa-stop"></i>
+                                Dừng kết bạn
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Log container -->
+                    <div class="mt-8">
+                        <h6 class="text-gray-700 font-semibold mb-3">Nhật ký hoạt động</h6>
+                        <div class="log-container" id="logContainer">
+                            <!-- Log messages will be added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Modal thêm tài khoản -->
+    <div id="addAccountModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+        <div class="modal-content w-full max-w-md mx-4">
+            <div class="modal-header flex justify-between items-center">
+                <h5 class="text-xl font-semibold text-gray-800">Thêm tài khoản Facebook</h5>
+                <button type="button" class="text-gray-400 hover:text-gray-500" onclick="this.closest('#addAccountModal').classList.add('hidden')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <form action="{{ url_for('api.add_account') }}" method="POST" class="space-y-6">
+                    <div class="form-group">
+                        <label class="form-label">Tên tài khoản</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cookie</label>
+                        <textarea class="form-control" name="cookie" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-full">Thêm</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal sửa tài khoản -->
+    <div id="editAccountModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+        <div class="modal-content w-full max-w-md mx-4">
+            <div class="modal-header flex justify-between items-center">
+                <h5 class="text-xl font-semibold text-gray-800">Sửa tài khoản Facebook</h5>
+                <button type="button" class="text-gray-400 hover:text-gray-500" onclick="this.closest('#editAccountModal').classList.add('hidden')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <form id="editAccountForm" method="POST" class="space-y-6">
+                    <div class="form-group">
+                        <label class="form-label">Tên tài khoản</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cookie</label>
+                        <textarea class="form-control" name="cookie" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-full">Cập nhật</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // Navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Update active link
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                // Show corresponding section
+                const sectionId = link.dataset.section;
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById(sectionId).classList.add('active');
+            });
+        });
+
+        // Mobile menu
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.querySelector('.sidebar');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        // Override handleLogMessage in FacebookTools class
+        const originalHandleLogMessage = FacebookTools.prototype.handleLogMessage;
+        FacebookTools.prototype.handleLogMessage = function(event) {
+            if (event.data === '{}') return;
+            
+            const log = JSON.parse(event.data);
+            
+            // Bỏ qua các log về việc tìm thấy file JSON
+            if (log.message && log.message.includes('Tìm thấy') && log.message.includes('file JSON')) {
+                return;
+            }
+            
+            // Hiển thị các log khác
+            const logElement = document.createElement('div');
+            logElement.className = log.is_error ? 'text-red-500' : 'text-gray-700';
+            logElement.textContent = `[${log.timestamp}] ${log.message}`;
+            
+            this.logContainer.appendChild(logElement);
+            this.logContainer.scrollTop = this.logContainer.scrollHeight;
+        };
+    </script>
+</body>
+</html> 

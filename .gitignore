@@ -1,0 +1,52 @@
+# Thư mục profile Chrome
+profile_facebook_*/
+**/profile_facebook_*/
+
+# File môi trường
+.env
+
+# File chứa thông tin đã gửi kết bạn
+sent_requests.json
+mutual_friends.json
+processed_ids.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log 
+.cursorrules
+fb_cookies.pkl
+accounts.json
+unavailable_ids.json
+process_ids_profile/processed_ids_a_2.json
+process_ids_profile/processed_ids_cha.json
+profiles/chợ_tân_an_online_20250206_220554.json
+profiles/group_20250208_001516.json
+profiles/group_20250213_184130.json
+profiles/group_20250213_190238.json

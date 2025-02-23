@@ -1,0 +1,36 @@
+.card {
+    margin-bottom: 20px;
+}
+
+.log-container {
+    height: 300px;
+    overflow-y: auto;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+}
+
+.log-message {
+    margin-bottom: 5px;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.log-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.log-error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.opacity-50 {
+    opacity: 0.5;
+}
+
+.cursor-not-allowed {
+    cursor: not-allowed;
+} 
